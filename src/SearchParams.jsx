@@ -20,7 +20,6 @@ const SearchParams = () => {
   const [adoptedPet] = useContext(AdoptedPetContext);
 
   const results = useQuery(["search", requestParams], fetchSearch);
-  console.log(results);
   const pets = results?.data?.pets ?? [];
   const endingPage =
     results?.data?.numberOfResults > 0
@@ -92,8 +91,6 @@ const SearchParams = () => {
               style={{ display: "inline-block" }}
               key={i}
               onClick={() => {
-                console.log(i);
-                console.log();
                 setRequestParams({ ...requestParams, page: i });
               }}
             >
