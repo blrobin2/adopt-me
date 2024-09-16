@@ -29,8 +29,9 @@ const SearchParams = () => {
     endingPage >= 0 ? [...Array(endingPage).keys()] : [];
 
   return (
-    <div className="search-params">
+    <div className="my-0 mx-auto w-11/12">
       <form
+        className="rounded-lg mb-10 flex flex-col items-center justify-center bg-gray-200 p-10 shadow-lg"
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
@@ -50,13 +51,14 @@ const SearchParams = () => {
         ) : null}
         <label htmlFor="location">
           Location
-          <input id="location" name="location" placeholder="Location" />
+          <input type="text" id="location" name="location" placeholder="Location" className="search-input" />
         </label>
         <label htmlFor="animal">
           Animal
           <select
             id="animal"
             name="animal"
+            className="search-input"
             onChange={(e) => {
               setAnimal(e.target.value);
             }}
@@ -73,7 +75,7 @@ const SearchParams = () => {
         </label>
         <label htmlFor="breed">
           Breed
-          <select disabled={!breeds.length} id="breed" name="breed">
+          <select disabled={!breeds.length} id="breed" name="breed" className="search-input grayed-out-disabled">
             {breeds.map((breed) => (
               <option key={breed} value={breed}>
                 {breed}
@@ -81,15 +83,15 @@ const SearchParams = () => {
             ))}
           </select>
         </label>
-        <button>Submit</button>
+        <button className="rounded px-6 py-2 text-white hover:opacity-50 border-none bg-orange-500">Submit</button>
       </form>
 
       <Results pets={pets} />
       {paginationNumbers.length > 0
         ? paginationNumbers.map((i) => (
             <button
-              style={{ display: "inline-block" }}
               key={i}
+              className={`rounded px-6 py-2 text-white hover:opacity-50 border-none  inline-block ${requestParams.page === i ? 'bg-orange-400' : 'bg-orange-500' }`}
               onClick={() => {
                 setRequestParams({ ...requestParams, page: i });
               }}
