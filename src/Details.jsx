@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, lazy } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,7 +6,8 @@ import AdoptedPetContext from "./AdoptedPetContext";
 import fetchPet from "./fetchPet";
 import Carousel from "./Carousel";
 import ErrorBoundary from "./ErrorBoundary";
-import Modal from "./Modal";
+
+const Modal = lazy(() => import("./Modal"));
 
 const Details = () => {
   const { id } = useParams();
@@ -31,9 +32,7 @@ const Details = () => {
       <div>
         <h1>{pet.name}</h1>
         <h2>{`${pet.animal} — ${pet.breed} — ${pet.city}, ${pet.state}`}</h2>
-        <button onClick={() => setShowModal(true)}>
-          Adopt {pet.name}
-        </button>
+        <button onClick={() => setShowModal(true)}>Adopt {pet.name}</button>
         <p>{pet.description}</p>
         {showModal ? (
           <Modal>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useDeferredValue, useMemo, useState, useTransition } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import AdoptedPetContext from "./AdoptedPetContext";
@@ -11,6 +11,7 @@ const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 const SearchParams = () => {
   const [animal, setAnimal] = useState("");
   const [breeds] = useBreedList(animal);
+  const [isPending, startTransition] = useTransition();
   const [requestParams, setRequestParams] = useState({
     location: "",
     animal: "",
@@ -21,6 +22,13 @@ const SearchParams = () => {
 
   const results = useQuery(["search", requestParams], fetchSearch);
   const pets = results?.data?.pets ?? [];
+  const deferredPets = useDeferredValue(pets);
+  const renderedPets = useMemo(
+    () => <Results pets={deferredPets} />,
+    [deferredPets]
+  );
+
+
   const endingPage =
     results?.data?.numberOfResults > 0
       ? Math.ceil(results?.data?.numberOfResults / 10)
@@ -40,7 +48,9 @@ const SearchParams = () => {
             location: formData.get("location") ?? "",
             page: 0,
           };
-          setRequestParams(obj);
+          startTransition(() => {
+            setRequestParams(obj);
+          })
         }}
       >
         {adoptedPet ? (
@@ -81,10 +91,16 @@ const SearchParams = () => {
             ))}
           </select>
         </label>
-        <button>Submit</button>
+        {
+          isPending ? (
+            <div className="mini loading-pane">
+              <h2 className="loader">🌀</h2>
+            </div>
+          ) : <button>Submit</button>
+        }
       </form>
 
-      <Results pets={pets} />
+      { renderedPets }
       {paginationNumbers.length > 0
         ? paginationNumbers.map((i) => (
             <button
