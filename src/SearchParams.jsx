@@ -1,30 +1,24 @@
-import { useContext, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import AdoptedPetContext from "./AdoptedPetContext";
+import { all } from "./searchParamsSlice";
 import Results from "./Results";
 import useBreedList from "./useBreedList";
-import fetchSearch from "./fetchSearch";
+import { useSearchQuery } from "./petApiService";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const SearchParams = () => {
   const [animal, setAnimal] = useState("");
   const [breeds] = useBreedList(animal);
-  const [requestParams, setRequestParams] = useState({
-    location: "",
-    animal: "",
-    breed: "",
-    page: 0,
-  });
-  const [adoptedPet] = useContext(AdoptedPetContext);
+  const dispatch = useDispatch();
+  const adoptedPet = useSelector((state) => state.adoptedPet.value);
+  const searchParams = useSelector((state) => state.searchParams.value);
 
-  const results = useQuery(["search", requestParams], fetchSearch);
-  const pets = results?.data?.pets ?? [];
+  const { data: results } = useSearchQuery(searchParams);
+  const pets = results?.pets ?? [];
   const endingPage =
-    results?.data?.numberOfResults > 0
-      ? Math.ceil(results?.data?.numberOfResults / 10)
-      : 0;
+    results?.numberOfResults > 0 ? Math.ceil(results?.numberOfResults / 10) : 0;
   const paginationNumbers =
     endingPage >= 0 ? [...Array(endingPage).keys()] : [];
 
@@ -40,7 +34,7 @@ const SearchParams = () => {
             location: formData.get("location") ?? "",
             page: 0,
           };
-          setRequestParams(obj);
+          dispatch(all(obj));
         }}
       >
         {adoptedPet ? (
@@ -90,9 +84,7 @@ const SearchParams = () => {
             <button
               style={{ display: "inline-block" }}
               key={i}
-              onClick={() => {
-                setRequestParams({ ...requestParams, page: i });
-              }}
+              onClick={() => dispatch(all({ ...searchParams, page: i }))}
             >
               {i + 1}
             </button>
