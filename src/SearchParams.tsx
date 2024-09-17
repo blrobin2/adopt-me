@@ -1,15 +1,16 @@
 import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import { Animal } from "./APIResponseTypes";
 import AdoptedPetContext from "./AdoptedPetContext";
 import Results from "./Results";
 import useBreedList from "./useBreedList";
 import fetchSearch from "./fetchSearch";
 
-const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
+const ANIMALS: Animal[] = ["bird", "cat", "dog", "rabbit", "reptile"];
 
 const SearchParams = () => {
-  const [animal, setAnimal] = useState("");
+  const [animal, setAnimal] = useState("" as Animal);
   const [breeds] = useBreedList(animal);
   const [requestParams, setRequestParams] = useState({
     location: "",
@@ -22,8 +23,8 @@ const SearchParams = () => {
   const results = useQuery(["search", requestParams], fetchSearch);
   const pets = results?.data?.pets ?? [];
   const endingPage =
-    results?.data?.numberOfResults > 0
-      ? Math.ceil(results?.data?.numberOfResults / 10)
+    (results?.data?.numberOfResults) || 0 > 0
+      ? Math.ceil((results?.data?.numberOfResults) || 10 / 10)
       : 0;
   const paginationNumbers =
     endingPage >= 0 ? [...Array(endingPage).keys()] : [];
@@ -33,11 +34,11 @@ const SearchParams = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          const formData = new FormData(e.target);
+          const formData = new FormData(e.currentTarget);
           const obj = {
-            animal: formData.get("animal") ?? "",
-            breed: formData.get("breed") ?? "",
-            location: formData.get("location") ?? "",
+            animal: formData.get("animal")?.toString() ?? "",
+            breed: formData.get("breed")?.toString() ?? "",
+            location: formData.get("location")?.toString() ?? "",
             page: 0,
           };
           setRequestParams(obj);
@@ -58,10 +59,10 @@ const SearchParams = () => {
             id="animal"
             name="animal"
             onChange={(e) => {
-              setAnimal(e.target.value);
+              setAnimal(e.target.value as Animal);
             }}
             onBlur={(e) => {
-              setAnimal(e.target.value);
+              setAnimal(e.target.value as Animal);
             }}
           >
             {ANIMALS.map((animal) => (
