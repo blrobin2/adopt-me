@@ -7,4 +7,8 @@ export default defineConfig({
   build: {
     outDir: "../dist",
   },
+  test: {
+    environment: "happy-dom",
+    setupFiles: ["./setupVitest.js"],
+  },
 });

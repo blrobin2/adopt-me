@@ -7,7 +7,7 @@ async function fetchBreedList({ queryKey }) {
     `https://pets-v2.dev-apis.com/breeds?animal=${animal}`
   );
 
-  if (!res.ok) {
+  if (res.status !== 200) {
     throw new Error(`breeds ${animal} fetch not ok`);
   }
 
