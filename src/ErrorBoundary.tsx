@@ -1,7 +1,7 @@
 import { Component, ErrorInfo, ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-class ErrorBoundary extends Component<{children: ReactElement}> {
+class ErrorBoundary extends Component<{ children: ReactElement }> {
   state = {
     hasError: false,
   };

@@ -23,8 +23,8 @@ const SearchParams = () => {
   const results = useQuery(["search", requestParams], fetchSearch);
   const pets = results?.data?.pets ?? [];
   const endingPage =
-    (results?.data?.numberOfResults) || 0 > 0
-      ? Math.ceil((results?.data?.numberOfResults) || 10 / 10)
+    results?.data?.numberOfResults || 0 > 0
+      ? Math.ceil(results?.data?.numberOfResults || 10 / 10)
       : 0;
   const paginationNumbers =
     endingPage >= 0 ? [...Array(endingPage).keys()] : [];
